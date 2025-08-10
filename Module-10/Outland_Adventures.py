@@ -152,3 +152,107 @@ finally:
     db.close()
 
 
+query = """
+SELECT trip.region,
+       YEAR(booking.booking_date) AS year,
+       COUNT(*) AS total_bookings
+FROM booking
+JOIN trip ON booking.trip_id = trip.trip_id
+GROUP BY trip.region, year
+ORDER BY trip.region, year;
+"""
+
+try:
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    print(f"\nBooking Trends by Region and Year")
+    print("Region | Year | Total Bookings")
+    for row in rows:
+        print(f"{row[0]} | {row[1]} | {row[2]}")
+
+except mysql.connector.Error as err:
+    print(f"MySQL Error: {err}")
+finally:
+    cursor.close()
+    conn.close()
+
+
+query = """
+SELECT trip.region,
+       YEAR(booking.booking_date) AS year,
+       COUNT(*) AS total_bookings
+FROM booking
+JOIN trip ON booking.trip_id = trip.trip_id
+GROUP BY trip.region, year
+ORDER BY trip.region, year;
+"""
+
+try:
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    print(f"\nBooking Trends by Region and Year")
+    print("Region | Year | Total Bookings")
+    for row in rows:
+        print(f"{row[0]} | {row[1]} | {row[2]}")
+
+except mysql.connector.Error as err:
+    print(f"MySQL Error: {err}")
+finally:
+    cursor.close()
+    conn.close()
+
+
+query = """
+SELECT name, type, status, purchase_date
+FROM equipment
+WHERE purchase_date <= DATE_SUB(CURDATE(), INTERVAL 5 YEAR);
+"""
+
+try:
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    print(f"\nInventory Older Than 5 Years")
+    print("Name | Type | Status | Purchase Date")
+    for row in rows:
+        print(f"{row[0]} | {row[1]} | {row[2]} | {row[3]}")
+
+except mysql.connector.Error as err:
+    print(f"MySQL Error: {err}")
+finally:
+    cursor.close()
+    conn.close()
+
+query = """
+SELECT e.Name AS equipment_name,
+       COUNT(DISTINCT t.Customer_ID) AS unique_buyers,
+       COUNT(*) AS total_purchases,
+       SUM(t.Amount) AS total_revenue
+FROM transaction t
+JOIN equipment e ON t.Equipment_ID = e.Equipment_ID
+WHERE t.Transaction_Type = 'purchase'
+GROUP BY e.Name
+ORDER BY total_revenue DESC;
+"""
+
+try:
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    print("\nEquipment Sales Summary")
+    print("Equipment Name | Unique Buyers | Total Purchases | Total Revenue")
+    for row in rows:
+        print(f"{row[0]} | {row[1]} | {row[2]} | ${row[3]:.2f}")
+
+except mysql.connector.Error as err:
+    print(f"MySQL Error: {err}")
+finally:
+    cursor.close()
+    conn.close()
